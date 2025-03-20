@@ -94,7 +94,7 @@ Which airlines had the largest arrival delays? Complete the code below.
 
 flights |>
   drop_na(arr_delay) |>
-  ___________(airlines, by = "_________")  |>
+  left_join(airlines, by = "carrier")  |>
   head() 
 ```
 
@@ -112,10 +112,10 @@ Which airlines had the largest arrival delays? Complete the code below.
 
 flights |>
   drop_na(arr_delay) |>
-  __________________  |>
-  group_by(_________) |>
-  __________________  |>
-  arrange(__________) 
+  left_join(airlines, by = "carrier")  |>
+  group_by(name) |>
+  summarize(avg_delay = mean(arr_delay))  |>
+  arrange(avg_delay) 
 ```
 
 ## Your Turn 2a
@@ -128,7 +128,7 @@ Join `flights` and `airports` by `dest` and `faa`.
 
 flights |> 
   drop_na(arr_delay) |>
-  ______(airports, __________________) |>
+  left_join(airports, by = c("dest" = "faa")) |>
   head()
 ```
 
@@ -148,10 +148,10 @@ Order by average delay, worst to best.
 
 flights |> 
   drop_na(arr_delay) |>
-  ______(airports, __________________) |>
+  left_join(airports, by = c("dest" = "faa")) |>
   group_by(name) |>
-  _________(distance = _____________, delay = _____________) |>
-  ______(_____(delay))
+  summarize(distance = first(distance), delay = mean(arr_delay)) |>
+  arrange(desc(delay))
 
 ```
 
@@ -178,8 +178,8 @@ Notice that the column to join on is named `faa` in the **airports** data set an
 
 ```{r}
 #| label: airports-nyc
-__________ |>
-  _____________________________ |>
+airports |>
+  semi_join(flights, by = c("faa" = "dest")) |>
   select(faa)
 ```
 
@@ -189,7 +189,7 @@ __________ |>
 ```{r}
 #| label: distinct
 
-instruments |> 
+instrument |> 
   distinct(plays)
 ```
 
